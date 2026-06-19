@@ -51,7 +51,7 @@ x-vol-bags: &vol-bags
   # Override ROS_BAGS_DIR in a .env file to point at your archive directory.
   type: bind
   source: ${ROS_BAGS_DIR:-./bags}
-  target: /a2_ros/bags
+  target: /a2_ros_ws/bags
 
 services:
   # Build-only service for the builder stage (Unitree SDK, MuJoCo, Python venv).
@@ -119,10 +119,13 @@ services:
         target: /home/ubuntu/.bash_history_dir
       - type: volume
         source: dev_colcon_build
-        target: /a2_ros/build
+        target: /a2_ros_ws/build
       - type: volume
         source: dev_colcon_install
-        target: /a2_ros/install
+        target: /a2_ros_ws/install
+      - type: volume
+        source: dev_colcon_log
+        target: /a2_ros_ws/log
       - type: volume
         source: dev_rosdep_cache
         target: /home/ubuntu/.ros
@@ -160,10 +163,13 @@ services:
         target: /home/ubuntu/.bash_history_dir
       - type: volume
         source: nuc_colcon_build
-        target: /a2_ros/build
+        target: /a2_ros_ws/build
       - type: volume
         source: nuc_colcon_install
-        target: /a2_ros/install
+        target: /a2_ros_ws/install
+      - type: volume
+        source: nuc_colcon_log
+        target: /a2_ros_ws/log
       - type: volume
         source: nuc_rosdep_cache
         target: /home/ubuntu/.ros
@@ -214,7 +220,7 @@ services:
       - *vol-workspace
       - type: volume
         source: dev_colcon_install
-        target: /a2_ros/install
+        target: /a2_ros_ws/install
 
   # ---- KasmVNC desktop (opt-in) -------------------------------------------
   # Starts a KasmVNC X server + XFCE desktop on display :20, served at
@@ -257,19 +263,24 @@ services:
       - *vol-workspace
       - type: volume
         source: dev_colcon_build
-        target: /a2_ros/build
+        target: /a2_ros_ws/build
       - type: volume
         source: dev_colcon_install
-        target: /a2_ros/install
+        target: /a2_ros_ws/install
+      - type: volume
+        source: dev_colcon_log
+        target: /a2_ros_ws/log
 
 volumes:
   dev_bash_history:
   dev_colcon_build:
   dev_colcon_install:
+  dev_colcon_log:
   dev_rosdep_cache:
   nuc_bash_history:
   nuc_colcon_build:
   nuc_colcon_install:
+  nuc_colcon_log:
   nuc_rosdep_cache:
   # Shares the KasmVNC X socket (/tmp/.X11-unix) between the vnc server and
   # a2_ros_dev (see compose.vnc.yml) so GUI apps in dev can render to display :20.
