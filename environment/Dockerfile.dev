@@ -115,6 +115,25 @@ USER root
 ENV MUJOCO_DIR=/opt/mujoco/mujoco-${MUJOCO_VERSION}
 COPY --from=mujoco-builder /opt/mujoco /opt/mujoco
 RUN ln -sf $MUJOCO_DIR external/unitree_mujoco/simulate/mujoco
+# Replace CPU onnxruntime with CUDA-enabled onnxruntime-gpu
+RUN /opt/venv/bin/pip uninstall -y onnxruntime && \
+    /opt/venv/bin/pip install --no-cache-dir onnxruntime-gpu==1.20.0
+
+# Add NVIDIA CUDA repository and install CUDA/cuDNN runtime libraries
+RUN wget -q https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb && \
+    dpkg -i cuda-keyring_1.1-1_all.deb && \
+    rm cuda-keyring_1.1-1_all.deb && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        cuda-cudart-12-6 \
+        libcublas-12-6 \
+        libcudnn9-cuda-12 \
+        libcurand-12-6 \
+        libcufft-12-6 \
+        libcusparse-12-6 \
+        libcusolver-12-6 \
+        cuda-nvrtc-12-6 && \
+    rm -rf /var/lib/apt/lists/*
 USER $USER
 
 # Set default package manifest for simulation

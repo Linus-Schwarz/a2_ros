@@ -28,6 +28,7 @@ x-common: &common
     - DISPLAY=${DISPLAY:-:20}
     - XAUTHORITY=/home/ubuntu/.Xauthority
     - QT_X11_NO_MITSHM=1
+    - LIBGL_ALWAYS_SOFTWARE=${LIBGL_ALWAYS_SOFTWARE:-0}
   working_dir: /a2_ros
   command: [ "bash" ]
   stdin_open: true
@@ -94,6 +95,13 @@ services:
       - type: volume
         source: dev_rosdep_cache
         target: /home/ubuntu/.ros
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
 
   # NUC (192.168.124.124). Deployed directly on the NUC.
   # The router runs on pc2 (ZENOH_ROUTER_IP_ROBOT in .env). Start the router
