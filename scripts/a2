@@ -176,7 +176,9 @@ case "$CMD" in
         ;;
     dlio)
         DLIO_ARGS=(rviz:=$RVIZ)
-        [ "$A2_MODE" = "sim" ] && DLIO_ARGS+=(use_sim_time:=true)
+        if [ "$A2_MODE" = "sim" ]; then
+            DLIO_ARGS+=(use_sim_time:=true pointcloud_topic:=/mujoco/front_lidar)
+        fi
         ros2 launch a2_ros dlio.launch.py "${DLIO_ARGS[@]}"
         ;;
     detect)
